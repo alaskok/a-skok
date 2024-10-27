@@ -1,44 +1,112 @@
-class Person {
-    private String name;
-    private String position;
-    private String email;
-    private String phone;
-    private double salary;
-    private int age;
+// public Class Animal
+abstract class Animal {
+    private static int count = 0; // Counter of created animals
+    public String name;
 
-    // Constructor
-    public Person(String name, String position, String email, String phone, double salary, int age) {
+    public Animal(String name) {
         this.name = name;
-        this.position = position;
-        this.email = email;
-        this.phone = phone;
-        this.salary = salary;
-        this.age = age;
+        count++;
     }
 
-    // Override toString method for displaying employee information
+    public static int getCount() {
+        return count;
+    }
+
+    public abstract void run(int distance);
+    public abstract void swim(int distance);
+}
+
+// Class Dog
+class Dog extends Animal {
+    private static final int MAX_RUN_DISTANCE = 500;
+    private static final int MAX_SWIM_DISTANCE = 10;
+
+    public Dog(String name) {
+        super(name);
+    }
+
     @Override
-    public String toString() {
-        return name + ", " + position + ", " + email + ", " + phone + ", " + salary + ", " + age;
+    public void run(int distance) {
+        System.out.println(name + " ran " + Math.min(distance, MAX_RUN_DISTANCE) + " meters.");
+    }
+
+    @Override
+    public void swim(int distance) {
+        System.out.println(name + " swam " + Math.min(distance, MAX_SWIM_DISTANCE) + " meters.");
     }
 }
 
-public class Main {
-    public static void main(String[] args) {
-        // Declare an array of objects
-        Person[] persArray = new Person[5];
+// Class Cat
+class Cat extends Animal {
+    private static final int MAX_RUN_DISTANCE = 200;
+    private static final int MAX_SWIM_DISTANCE = 0; // Cats can't swim
+    private boolean hungry = false;
 
-        // Initialize each element of the array
-        persArray[0] = new Person("Иванов Сергей", "Инженер", "ivanov@gmail.com", "292312312", 30000, 30);
-        persArray[1] = new Person("Петров Александр", "Менеджер", "petrov@gmail.comm", "292312313", 40000, 35);
-        persArray[2] = new Person("Сидоров Евгений", "Разработчик", "sidorov@gmail.com", "292312314", 35000, 28);
-        persArray[3] = new Person("Кузнецов Николай", "Дизайнер", "kuznetsov@gmail.com", "292312315", 45000, 27);
-        persArray[4] = new Person("Смирнова Анна", "Аналитик", "smirnova@gmail.comm", "292312316", 50000, 32);
+    public Cat(String name) {
+        super(name);
+    }
 
-        // Output information about all employees
-        for (Person person : persArray) {
-            System.out.println(person);
+    @Override
+    public void run(int distance) {
+        System.out.println(name + " ran " + Math.min(distance, MAX_RUN_DISTANCE) + " meters.");
+    }
+
+    @Override
+    public void swim(int distance) {
+        System.out.println(name + " can't swim.");
+    }
+
+    public void eat(int foodAmount, Bowl bowl) {
+        if (bowl.getFoodAmount() >= foodAmount) {
+            bowl.decreaseFood(foodAmount);
+            hungry = true;
+            System.out.println(name + " ate and is now hungry.");
+        } else {
+            System.out.println(name + " couldn't eat, not enough food in the bowl.");
         }
     }
 }
 
+// Class Bowl
+class Bowl {
+    private int foodAmount;
+
+    public Bowl(int foodAmount) {
+        if (foodAmount < 0) {
+            this.foodAmount = 0; // Don't allow negative food amount
+        } else {
+            this.foodAmount = foodAmount;
+        }
+    }
+
+    public int getFoodAmount() {
+        return foodAmount;
+    }
+
+    public void decreaseFood(int amount) {
+        if (amount <= foodAmount) {
+            foodAmount -= amount;
+        }
+    }
+}
+
+// Main class for testing
+public class Main {
+    public static void main(String[] args) {
+        Bowl bowl = new Bowl(10);
+
+        Dog dog = new Dog("Tuzik");
+        dog.run(150);
+        dog.swim(5);
+
+        Cat cat = new Cat("Barsik");
+        cat.run(100);
+        cat.swim(5);
+
+        // Feed the cat
+        cat.eat(5, bowl); // Enough food
+        cat.eat(10, bowl); // Not enough food
+
+        System.out.println("Total animals: " + Animal.getCount());
+    }
+}
